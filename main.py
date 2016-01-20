@@ -16,6 +16,11 @@ class Editor(QtGui.QMainWindow):
 		self.setCentralWidget(self.textEdit)
 		self.statusBar()
 
+		newFile = QtGui.QAction(QtGui.QIcon('new.png'), 'New', self)
+		newFile.setShortcut('Ctrl+N')
+		newFile.setStatusTip('New file')
+		newFile.triggered.connect(self.new_file)
+
 		openFile = QtGui.QAction(QtGui.QIcon('open.png'), 'Open', self)
 		openFile.setShortcut('Ctrl+O')
 		openFile.setStatusTip('Open new File')
@@ -28,27 +33,34 @@ class Editor(QtGui.QMainWindow):
 
 		menubar = self.menuBar()
 		fileMenu = menubar.addMenu('&File')
+		fileMenu.addAction(newFile)
 		fileMenu.addAction(openFile)       
 		fileMenu.addAction(saveFile)    
 	    
 		self.setGeometry(300, 300, 350, 300)
 		self.setWindowTitle('Editor')
 		self.show()
+
 		
+	def new_file(self):
+		self.textEdit.clear()
+
+
     	def open_file(self):
 	
         	fname = QtGui.QFileDialog.getOpenFileName(self, 'Open file', '/home')
         
        		f = open(fname, 'r')
         
-        	with f:        
+        	if f:        
             		data = f.read()
  	           	self.textEdit.setText(data) 
  	
 	def save_file(self):
-		fname = QtGui.QFileDialog.getSaveFileName(self, 'Save file', '/home')
+		fname = QtGui.QFileDialog.getSaveFileName(self, 'Save file', '/home', selectedFilter='*.txt')
 
 		text = self.textEdit.toPlainText()
+
 		if text:
 			f = open(fname,'w')	
 			f.write(text)
