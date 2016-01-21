@@ -27,6 +27,8 @@ class Editor(QtGui.QMainWindow):
 
 		self.initFileMenuActions()
                 self.initEditMenuActions()
+		# TODO add view and tools menubar
+
 
 		self.setGeometry(100, 100, 800, 600)
 		self.setWindowTitle('New file')
@@ -69,28 +71,41 @@ class Editor(QtGui.QMainWindow):
 		cutText = QtGui.QAction(QtGui.QIcon('cut.png'), 'Cut', self)
                 cutText.setShortcut('Ctrl+X')
                 cutText.setStatusTip('Cut Selected Text')
-                cutText.triggered.connect(self.cut_text)
+                cutText.triggered.connect(self.textEdit.cut)
 
                 copyText = QtGui.QAction(QtGui.QIcon('copy.png'), 'Copy', self)
                 copyText.setShortcut('Ctrl+C')
                 copyText.setStatusTip('Copy Selected Text')
-                copyText.triggered.connect(self.copy_text)
+                copyText.triggered.connect(self.textEdit.copy)
 
                 pasteText = QtGui.QAction(QtGui.QIcon('paste.png'),'Paste',self)
 		pasteText.setShortcut('Ctrl+V')
                 pasteText.setStatusTip('Paste Text')
-                pasteText.triggered.connect(self.paste_text)
+                pasteText.triggered.connect(self.textEdit.paste)
 
                 selectAllText = QtGui.QAction(QtGui.QIcon('sel_all.png'),'Select All',self)
                 selectAllText.setShortcut('Ctrl+A')
                 selectAllText.setStatusTip('Select All Text')
-                selectAllText.triggered.connect(self.sel_all_text)
+                selectAllText.triggered.connect(self.textEdit.selectAll)
 		
+		undoText = QtGui.QAction(QtGui.QIcon('undo.png'), 'Undo', self)
+                undoText.setShortcut('Ctrl+Z')
+                undoText.setStatusTip('Undo')
+                undoText.triggered.connect(self.textEdit.undo)
+
+		redoText = QtGui.QAction(QtGui.QIcon('redo.png'), 'Redo', self)
+                redoText.setShortcut('Ctrl+Y')
+                redoText.setStatusTip('Redo')
+                redoText.triggered.connect(self.textEdit.redo)
+
+
 
 		self.editMenu.addAction(cutText)
                 self.editMenu.addAction(copyText)
                 self.editMenu.addAction(pasteText)
                 self.editMenu.addAction(selectAllText)
+		self.editMenu.addAction(undoText)
+		self.editMenu.addAction(redoText)
 
 	def get_real_file_name(self, fname):
 		s = ''
@@ -107,10 +122,28 @@ class Editor(QtGui.QMainWindow):
 		else:	self.setWindowTitle('New file*')
 		self.is_saved = False
 
+	
+	def show_save_exit_dialogBox(self):
+		msg_box = QMessageBox()
+
+		msg_box.setText('The changes have not been saved')
+		msg_box.setInformativeText('Do you want to save the changes ?')
+		msg_box.setWindowTitle('Save?')
+
+		save_button = QPushButton('&Save')
+		cancel_button = QPushButton('&Cancel')
+
+		#msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Cancel)
+		#msg_box.buttonClicked.connect(
+
 
 	def new_file(self):
-		# TODO ask for saving existing file
-		self.textEdit.clear()
+		text = self.textEdit.toPlainText()
+
+		if not is_saved and text:
+			self.show_save_exit_dialogBox()
+		else:
+			self.textEdit.clear()
 
 
     	def open_file(self):
@@ -165,18 +198,6 @@ class Editor(QtGui.QMainWindow):
 			self.save_file()
 		else:
 			self.saveAs_file()
-	
-	def cut_text(self):
-		print 1
-
-	def copy_text(self):
-		print 1
-	
-	def paste_text(self):
-		print 1
-
-	def sel_all_text(self):	
-		print 1
 
 
 def main():
