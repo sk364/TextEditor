@@ -124,26 +124,35 @@ class Editor(QtGui.QMainWindow):
 
 	
 	def show_save_exit_dialogBox(self):
-		msg_box = QMessageBox()
+		msg_box = QtGui.QMessageBox()
 
 		msg_box.setText('The changes have not been saved')
 		msg_box.setInformativeText('Do you want to save the changes ?')
 		msg_box.setWindowTitle('Save?')
 
-		save_button = QPushButton('&Save')
-		cancel_button = QPushButton('&Cancel')
+		save_button = QtGui.QPushButton('&Save')
+		cancel_button = QtGui.QPushButton('&Cancel')
 
-		#msg_box.setStandardButtons(QMessageBox.Save | QMessageBox.Cancel)
-		#msg_box.buttonClicked.connect(
+		save_button.clicked.connect(self.save_file)
+		cancel_button.clicked.connect(sys.exit)
+
+		msg_box.addButton(save_button, QtGui.QMessageBox.AcceptRole)
+		msg_box.addButton(cancel_button, QtGui.QMessageBox.AcceptRole)
+
+		msg_box.exec_()
 
 
 	def new_file(self):
 		text = self.textEdit.toPlainText()
 
-		if not is_saved and text:
+		if not self.is_saved and text:
 			self.show_save_exit_dialogBox()
-		else:
-			self.textEdit.clear()
+		
+		self.textEdit.clear()
+
+		self.cur_file = ''
+                self.is_saved = False	
+		self.setWindowTitle("New file")
 
 
     	def open_file(self):
@@ -164,7 +173,7 @@ class Editor(QtGui.QMainWindow):
 
 		text = self.textEdit.toPlainText()
 
-		if text:
+		if fname:
 			f = open(fname,'w')
 			f.write(text)
 			self.is_saved = True
@@ -184,7 +193,7 @@ class Editor(QtGui.QMainWindow):
 		if fname:
 			fname.write(text)
 			self.is_saved = True
-			self.setWindowTitle(self.cur_file)
+			self.setWindowTitle(self.get_real_file_name(self.cur_file))
 			fname.close()
 
 
@@ -193,11 +202,9 @@ class Editor(QtGui.QMainWindow):
 
 		if self.is_saved or not text:	sys.exit()
 
-		elif self.cur_file:
-			# TODO show message for quiting or saving
-			self.save_file()
 		else:
-			self.saveAs_file()
+			self.show_save_exit_dialogBox()
+			sys.exit()
 
 
 def main():
