@@ -24,9 +24,11 @@ class Editor(QtGui.QMainWindow):
 		menubar = self.menuBar()
 		self.fileMenu = menubar.addMenu('&File')
 		self.editMenu = menubar.addMenu('&Edit')
+		self.viewMenu = menubar.addMenu('&View')
 
 		self.initFileMenuActions()
                 self.initEditMenuActions()
+		self.initViewMenuActions()
 		# TODO add view and tools menubar
 
 
@@ -40,25 +42,36 @@ class Editor(QtGui.QMainWindow):
                 newFile.setShortcut('Ctrl+N')
                 newFile.setStatusTip('New file')
                 newFile.triggered.connect(self.new_file)
+		
+		toolbar = self.addToolBar('New')
+        	toolbar.addAction(newFile)
 
                 openFile = QtGui.QAction(QtGui.QIcon('open.png'), 'Open', self)
                 openFile.setShortcut('Ctrl+O')
                 openFile.setStatusTip('Open new File')
                 openFile.triggered.connect(self.open_file)
 
+                toolbar.addAction(openFile)
+
                 saveAsFile = QtGui.QAction(QtGui.QIcon('saveAs.png'),'Save As',self)
                 saveAsFile.setStatusTip('Save As new or existing file')
                 saveAsFile.triggered.connect(self.saveAs_file)
+
+                toolbar.addAction(saveAsFile)
 
                 saveFile = QtGui.QAction(QtGui.QIcon('save.png'),'Save',self)
                 saveFile.setShortcut('Ctrl+S')
                 saveFile.setStatusTip('Save new File')
                 saveFile.triggered.connect(self.save_file)
 
-                exitFile = QtGui.QAction(QtGui.QIcon('exit.png'),'Exit',self)
+                toolbar.addAction(saveFile)
+
+                exitFile = QtGui.QAction(QtGui.QIcon('exit24.png'),'Exit',self)
                 exitFile.setShortcut('Ctrl+W')
-                exitFile.setStatusTip('Exit File')
+                exitFile.setStatusTip('Exit')
                 exitFile.triggered.connect(self.exit_file)
+
+                toolbar.addAction(exitFile)
 
 		self.fileMenu.addAction(newFile)
                 self.fileMenu.addAction(openFile)
@@ -106,6 +119,16 @@ class Editor(QtGui.QMainWindow):
                 self.editMenu.addAction(selectAllText)
 		self.editMenu.addAction(undoText)
 		self.editMenu.addAction(redoText)
+
+
+        def initViewMenuActions(self):
+                statusBar= QtGui.QAction(QtGui.QIcon('status.png'), 'Status Bar', self)
+                statusBar.setStatusTip('Status Bar')
+                #statusBar.triggered.connect(
+		#QStatusBar.addWidget (self, QWidget widget, int stretch = 0)
+		#)
+
+		self.viewMenu.addAction(statusBar)
 
 	def get_real_file_name(self, fname):
 		s = ''
